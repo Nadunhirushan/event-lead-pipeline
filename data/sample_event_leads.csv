@@ -1,0 +1,9 @@
+first_name,last_name,email,company,job_title,phone
+priya,SHARMA,Priya.Sharma@AcmeBank.example ,Acme Bank,Head of Data & Analytics,+65 9123 4567
+Priya,Sharma,priya.sharma@acmebank.example,ACME BANK,Head of Data,
+john,doe,john.doe@gmail.com,,student,
+Kevin,Lim,kevin.lim@telcoasia.example,TelcoAsia,Sr. Mgr - Data & AI Platforms,+65 8000 1111
+Amara,Perera,amara@,Lanka Insurance,Chief Data Officer,
+Mei,Tan,mei.tan@govtech.example,GovTech,ML Engineer,
+Ravi,Kumar,ravi.kumar@finco.example,FinCo,VP Risk Analytics,
+,,,,,
