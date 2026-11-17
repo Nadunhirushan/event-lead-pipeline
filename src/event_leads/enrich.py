@@ -13,7 +13,7 @@ from event_leads.models import Lead
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL = "gemini-3.5-flash"
+DEFAULT_MODEL = "gemini-3.5-flash-lite"
 API_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 REVIEW_THRESHOLD = 0.7
 BACKOFF_SECONDS = (2, 4, 8, 16, 32)  # retries for 429/5xx from Gemini
