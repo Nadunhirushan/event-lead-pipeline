@@ -1,6 +1,7 @@
 """LLM-based enrichment of leads (persona, seniority, company domain)."""
 import logging
 import os
+import time
 from collections.abc import Callable
 from typing import Literal
 
@@ -15,6 +16,7 @@ logger = logging.getLogger(__name__)
 DEFAULT_MODEL = "gemini-3.5-flash"
 API_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 REVIEW_THRESHOLD = 0.7
+BACKOFF_SECONDS = (2, 4, 8, 16, 32)  # retries for 429/5xx from Gemini
 
 Persona = Literal[
     "data_leader", "ml_practitioner", "it_leader", "risk_leader", "business_leader", "other"
@@ -52,17 +54,28 @@ def call_gemini(prompt: str) -> str:
     """Default LLM function: calls the Gemini API. Key read from env."""
     load_dotenv()
     model = os.environ.get("GEMINI_MODEL", DEFAULT_MODEL)
-    response = httpx.post(
-        API_URL.format(model=model),
-        headers={"x-goog-api-key": os.environ["GEMINI_API_KEY"]},
-        json={
-            "contents": [{"parts": [{"text": prompt}]}],
-            "generationConfig": {"responseMimeType": "application/json", "maxOutputTokens": 2048},
-        },
-        timeout=30,
-    )
+    for attempt in range(len(BACKOFF_SECONDS) + 1):
+        response = httpx.post(
+            API_URL.format(model=model),
+            headers={"x-goog-api-key": os.environ["GEMINI_API_KEY"]},
+            json={
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {
+                    "responseMimeType": "application/json",
+                    "maxOutputTokens": 2048,
+                },
+            },
+            timeout=60,
+        )
+        retryable = response.status_code == 429 or response.status_code >= 500
+        if not retryable or attempt == len(BACKOFF_SECONDS):
+            break
+        delay = BACKOFF_SECONDS[attempt]
+        logger.warning("Gemini %d; retry %d in %ds", response.status_code, attempt + 1, delay)
+        time.sleep(delay)
     response.raise_for_status()
     return response.json()["candidates"][0]["content"]["parts"][0]["text"]
+
 
 def _strip_fences(text: str) -> str:
     text = text.strip()
@@ -124,6 +137,7 @@ def enrich_leads(leads: list[Lead], llm: LlmFn = call_gemini) -> list[EnrichedLe
         )
         out.append(enriched)
     return out
+
 
 
 

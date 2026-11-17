@@ -95,3 +95,21 @@ def test_call_gemini_uses_env(monkeypatch) -> None:
     )
     assert call_gemini("hi") == GOOD
     assert route.calls[0].request.headers["x-goog-api-key"] == "test-key"
+
+
+@respx.mock
+def test_call_gemini_retries_on_429(monkeypatch) -> None:
+    from event_leads import enrich
+
+    sleeps: list[float] = []
+    monkeypatch.setattr(enrich.time, "sleep", sleeps.append)
+    monkeypatch.setenv("GEMINI_API_KEY", "k")
+    route = respx.post(url__regex=r"https://generativelanguage\.googleapis\.com/.*").mock(
+        side_effect=[
+            httpx.Response(429),
+            httpx.Response(503),
+            httpx.Response(200, json={"candidates": [{"content": {"parts": [{"text": GOOD}]}}]}),
+        ]
+    )
+    assert call_gemini("hi") == GOOD
+    assert route.call_count == 3 and sleeps == [2, 4]
