@@ -9,7 +9,11 @@ requires-python = ">=3.11"
 dependencies = ["pydantic>=2", "httpx", "python-dotenv", "mcp>=1.2,<2"]
 
 [project.optional-dependencies]
-dev = ["pytest", "respx"]
+dev = ["pytest", "respx", "ruff"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
 
 [tool.setuptools.packages.find]
 where = ["src"]

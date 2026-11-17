@@ -1,8 +1,9 @@
 from dotenv import load_dotenv
+
 load_dotenv()  # loads GEMINI_API_KEY from .env
 
-from event_leads.clean import load_csv, clean_leads
-from event_leads.enrich import enrich_leads   # use your real function name
+from event_leads.clean import clean_leads, load_csv
+from event_leads.enrich import enrich_leads  # use your real function name
 
 result = clean_leads(load_csv("data/sample_event_leads.csv"))
 for item in enrich_leads(result.leads):
