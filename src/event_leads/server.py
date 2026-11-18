@@ -7,7 +7,9 @@ from mcp.server.fastmcp import FastMCP
 
 from event_leads.clean import clean_leads, load_csv
 from event_leads.enrich import LlmFn, call_gemini, enrich_leads
+from event_leads.ga4 import ga4_page_traffic as _ga4
 from event_leads.pipeline import run_pipeline
+from event_leads.seo import seo_audit as _seo_audit
 
 logger = logging.getLogger(__name__)
 
@@ -108,6 +110,17 @@ def upload_event_leads(csv_path: str, event_name: str, dry_run: bool = True) -> 
     report = run_pipeline(csv_path, event_name, dry_run=dry_run, llm=LLM)
     return report.to_markdown()
 
+@mcp.tool()
+def seo_audit(url: str) -> dict:
+    """Audit one web page's technical SEO: title, meta description, H1,
+    canonical, JSON-LD structured data, noindex, image alt text."""
+    return _seo_audit(url)
+
+@mcp.tool()
+def ga4_page_traffic(start_date: str = "28daysAgo", end_date: str = "today") -> list[dict]:
+    """Read-only. Sessions, engagement rate and key events per page from GA4."""
+    return _ga4(start_date, end_date)
+    
 
 def main() -> None:
     # stdout carries the MCP protocol, so logs must go to stderr.

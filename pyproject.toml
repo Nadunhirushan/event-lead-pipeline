@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "event-leads"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = ["pydantic>=2", "httpx", "python-dotenv", "mcp>=1.2,<2"]
+dependencies = ["pydantic>=2", "httpx", "python-dotenv", "mcp>=1.2,<2", "google-analytics-data", "beautifulsoup4"]
 
 [project.optional-dependencies]
 dev = ["pytest", "respx", "ruff"]
