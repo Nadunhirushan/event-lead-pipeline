@@ -1,7 +1,9 @@
 
 import json
+
 import httpx
 from bs4 import BeautifulSoup
+
 
 def seo_audit(url: str) -> dict:
     """Check basic technical SEO for one page."""

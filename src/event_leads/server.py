@@ -7,9 +7,9 @@ from mcp.server.fastmcp import FastMCP
 
 from event_leads.clean import clean_leads, load_csv
 from event_leads.enrich import LlmFn, call_gemini, enrich_leads
+from event_leads.ga4 import ga4_page_traffic as _ga4
 from event_leads.pipeline import run_pipeline
 from event_leads.seo import seo_audit as _seo_audit
-from event_leads.ga4 import ga4_page_traffic as _ga4
 
 logger = logging.getLogger(__name__)
 

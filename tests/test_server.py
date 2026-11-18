@@ -67,4 +67,10 @@ def test_tools_registered() -> None:
     import asyncio
 
     names = {t.name for t in asyncio.run(server.mcp.list_tools())}
-    assert names == {"clean_event_leads", "enrich_event_leads", "upload_event_leads"}
+    assert names == {
+        "clean_event_leads",
+        "enrich_event_leads",
+        "upload_event_leads",
+        "seo_audit",
+        "ga4_page_traffic",
+    }
